@@ -18,32 +18,6 @@ especialmente orientado a aplicaciones legacy.
   - Linux
   - macOS
 
-## Notas de Compatibilidad (PHP 7.1)
-
-Este proyecto está optimizado para PHP 7.1.3. Debido a que algunas librerías modernas han dejado de soportar esta versión, se han aplicado las siguientes restricciones en `composer.json` para evitar errores de sintaxis (T_STRING, property types) y asegurar el funcionamiento de los tests:
-
-- `symfony/polyfill-php72`: **v1.19.0** (Activación correcta de `spl_object_id`).
-- `phpdocumentor/reflection-docblock`: **v4.3.4** (Evita sintaxis de PHP 7.4).
-- `phpdocumentor/type-resolver`: **v1.1.0**.
-- `phpdocumentor/reflection-common`: **v2.1.0**.
-- `phpspec/prophecy`: **v1.10.3**.
-
-> [!IMPORTANT]
-> Siempre utiliza `composer update --ignore-platform-reqs` dentro del contenedor para respetar estas versiones sin conflictos de extensiones locales.
-
-
-### Principios y Prácticas Aplicadas
-
-El proyecto ha sido desarrollado teniendo en cuenta los siguientes puntos clave:
-
-1.  **Orden, escalabilidad y organización del código**: Estructura modular y separación de responsabilidades (Controladores, Modelos, Recursos, Requests).
-2.  **Validaciones de request y códigos de respuesta**: Uso de Form Requests para validación centralizada y respuestas HTTP semánticas.
-3.  **Uso de buenas prácticas**: Inyección de dependencias, principios SOLID básicos, y uso de características nativas de Laravel.
-4.  **Calidad del código frente al tiempo de desarrollo**: Soluciones robustas pero eficientes, evitando sobre-ingeniería.
-5.  **Legibilidad del código**: Naming conventions claros y código auto-explicativo.
-6.  **Uso adecuado de códigos de respuesta HTTP y métodos HTTP**: GET, POST, PUT, DELETE con respuestas 200, 201, 204, 401, 422, etc.
-7.  **Validaciones**: Validación estricta de datos de entrada en todas las operaciones de escritura.
-
 ### Configuración recomendada en Windows
 
 - Docker Desktop configurado para usar **Linux containers**
@@ -66,6 +40,30 @@ docker-compose up -d
 ```
 
 Al terminar ya puedes acceder a http://localhost:8000/
+
+## Notas adicionales de Compatibilidad (PHP 7.1)
+
+Este proyecto está optimizado para PHP 7.1.3. Debido a que algunas librerías modernas han dejado de soportar esta versión, se han aplicado las siguientes restricciones en `composer.json` para evitar errores de sintaxis (T_STRING, property types) y asegurar el funcionamiento de los tests:
+
+- `symfony/polyfill-php72`: **v1.19.0** (Activación correcta de `spl_object_id`).
+- `phpdocumentor/reflection-docblock`: **v4.3.4** (Evita sintaxis de PHP 7.4).
+- `phpdocumentor/type-resolver`: **v1.1.0**.
+- `phpdocumentor/reflection-common`: **v2.1.0**.
+- `phpspec/prophecy`: **v1.10.3**.
+
+> [!IMPORTANT]
+> Siempre utiliza `composer update --ignore-platform-reqs` dentro del contenedor para respetar estas versiones sin conflictos de extensiones locales.
+### Principios y Prácticas Aplicadas
+
+El proyecto ha sido desarrollado teniendo en cuenta los siguientes puntos clave:
+
+1.  **Orden, escalabilidad y organización del código**: Estructura modular y separación de responsabilidades (Controladores, Modelos, Recursos, Requests).
+2.  **Validaciones de request y códigos de respuesta**: Uso de Form Requests para validación centralizada y respuestas HTTP semánticas.
+3.  **Uso de buenas prácticas**: Inyección de dependencias, principios SOLID básicos, y uso de características nativas de Laravel.
+4.  **Calidad del código frente al tiempo de desarrollo**: Soluciones robustas pero eficientes, evitando sobre-ingeniería.
+5.  **Legibilidad del código**: Naming conventions claros y código auto-explicativo.
+6.  **Uso adecuado de códigos de respuesta HTTP y métodos HTTP**: GET, POST, PUT, DELETE con respuestas 200, 201, 204, 401, 422, etc.
+7.  **Validaciones**: Validación estricta de datos de entrada en todas las operaciones de escritura.
 
 ## Seeders de Prueba
 
@@ -91,7 +89,6 @@ Para ejecutar las pruebas dentro del entorno Docker:
 ```bash
 docker-compose exec app vendor/bin/phpunit tests/Feature
 ```
-
 
 ## Tabla de APIs
 
