@@ -77,6 +77,20 @@ El proyecto incluye seeders para poblar la base de datos automáticamente al ini
 
 Los seeders son **idempotentes**; se pueden ejecutar múltiples veces sin duplicar el usuario de prueba principal.
 
+## Procesamiento Asíncrono (Jobs & Queues)
+
+Al registrar un nuevo libro, el sistema actualiza automáticamente el conteo de libros del autor en segundo plano para optimizar la respuesta de la API:
+
+1.  **Evento**: `BookCreated` se dispara al guardar el libro.
+2.  **Listener**: `TriggerBookCountUpdate` captura el evento y despacha el Job.
+3.  **Job**: `UpdateAuthorBookCount` (encolado) recalcula y actualiza la tabla `authors`.
+
+### Archivos involucrados:
+- `BookController.php` (Disparador)
+- `BookCreated.php` (Evento)
+- `TriggerBookCountUpdate.php` (Escuchador)
+- `UpdateAuthorBookCount.php` (Trabajo en cola)
+
 ## Pruebas Automatizadas (Feature Tests)
 
 Se ha implementado un suite de pruebas completo para verificar la integridad de la API:
