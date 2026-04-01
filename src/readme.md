@@ -163,3 +163,78 @@ Cuando los datos enviados no cumplen las reglas de validación:
     }
 }
 ```
+
+## Resumen de Pruebas (Tests)
+
+El proyecto incluye tests automatizados que verifican el comportamiento correcto de la API y el flujo asíncrono:
+
+### Tests de Libros (`BookApiTest`)
+
+| Test                                                        | Descripción                                                                  |
+| ----------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `test_can_list_books`                                       | Verifica que se listen todos los libros (200)                                |
+| `test_can_create_book_and_dispatches_event`                 | Crea libro y verifica que se dispare el evento `BookCreated`                 |
+| `test_can_show_book`                                        | Obtiene detalle de un libro específico (200)                                 |
+| `test_can_update_book`                                      | Actualiza un libro existente (200)                                           |
+| `test_can_delete_book`                                      | Elimina un libro (204)                                                       |
+| `test_cannot_list_books_without_token`                      | Rechaza petición sin autenticación (401)                                     |
+| `test_job_updates_author_book_count`                        | **Nuevo**: Verifica que el Job actualiza correctamente `books_count`         |
+| `test_cannot_create_book_with_invalid_author_id`            | **Nuevo**: Valida que rechaza `author_id` inexistente (422)                  |
+| `test_complete_flow_creates_book_and_updates_count_via_job` | **Nuevo**: Flujo completo: Crear libro → Evento → Job → Contador actualizado |
+
+### Tests de Autores (`AuthorApiTest`)
+
+| Test                                     | Descripción                    |
+| ---------------------------------------- | ------------------------------ |
+| `test_can_list_authors`                  | Lista todos los autores (200)  |
+| `test_can_create_author`                 | Crea un nuevo autor (201)      |
+| `test_can_show_author`                   | Muestra detalle de autor (200) |
+| `test_can_update_author`                 | Actualiza autor (200)          |
+| `test_can_delete_author`                 | Elimina autor (204)            |
+| `test_cannot_list_authors_without_token` | Rechaza sin token (401)        |
+
+## Protección contra Race Conditions
+
+### ¿Qué es una Race Condition?
+
+Una **race condition** (condición de carrera) ocurre cuando dos o más procesos intentan modificar el mismo dato simultáneamente, causando resultados inconsistentes.
+
+**Ejemplo del problema:**
+
+```
+Job A lee:   autor tiene 5 libros
+Job B lee:   autor tiene 5 libros (mismo momento)
+Job A guarda: 6 libros
+Job B guarda: 6 libros  ← ¡Error! Debería ser 7
+```
+
+### Solución Implementada
+
+El Job `UpdateAuthorBookCount` ahora utiliza **transacciones con bloqueo pesimista**:
+
+```php
+DB::transaction(function () {
+    // Lock del registro - solo un Job puede modificarlo a la vez
+    $author = Author::lockForUpdate()->find($this->authorId);
+
+    if ($author) {
+        $count = Book::where('author_id', $this->authorId)->count();
+        $author->update(['books_count' => $count]);
+    }
+});
+```
+
+### ¿Cómo funciona?
+
+| Sin protección                 | Con `lockForUpdate()`                   |
+| ------------------------------ | --------------------------------------- |
+| Job A lee: 5 libros            | Job A **bloquea** el registro del autor |
+| Job B lee: 5 libros            | Job B **espera** a que A termine        |
+| Job A guarda: 6                | Job A cuenta 6, guarda 6                |
+| Job B guarda: 6 ← ¡Incorrecto! | Job B cuenta 6, guarda 6 ← **Correcto** |
+
+### Beneficios
+
+- **Consistencia**: El contador siempre refleja la cantidad real de libros
+- **Concurrencia segura**: Múltiples Jobs pueden ejecutarse simultáneamente sin conflictos
+- **Integridad de datos**: Previene actualizaciones perdidas en escenarios de alta carga
