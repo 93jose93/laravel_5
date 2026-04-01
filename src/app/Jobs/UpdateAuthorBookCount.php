@@ -18,7 +18,7 @@ class UpdateAuthorBookCount implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $authorId;
+    public $authorId;
 
     public function __construct($authorId)
     {

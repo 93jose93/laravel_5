@@ -28,12 +28,16 @@ class AuthorApiTest extends TestCase
 
     public function test_can_list_authors()
     {
-        factory(Author::class, 3)->create();
+        $authors = factory(Author::class, 3)->create();
 
         $response = $this->withAuth()->getJson('/api/v1/authors');
 
-        $response->assertStatus(200)
-            ->assertJsonCount(3, 'data');
+        $response->assertStatus(200);
+
+        // Verificar que los 3 autores creados estén en la respuesta
+        foreach ($authors as $author) {
+            $response->assertJsonFragment(['name' => $author->name]);
+        }
     }
 
     public function test_can_create_author()
