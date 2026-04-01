@@ -53,6 +53,7 @@ Este proyecto está optimizado para PHP 7.1.3. Debido a que algunas librerías m
 
 > [!IMPORTANT]
 > Siempre utiliza `composer update --ignore-platform-reqs` dentro del contenedor para respetar estas versiones sin conflictos de extensiones locales.
+
 ### Principios y Prácticas Aplicadas
 
 El proyecto ha sido desarrollado teniendo en cuenta los siguientes puntos clave:
@@ -92,22 +93,58 @@ docker-compose exec app vendor/bin/phpunit tests/Feature
 
 ## Tabla de APIs
 
-| Método | Endpoint | Body (JSON) | Header | Descripción |
-| :--- | :--- | :--- | :--- | :--- |
-| **POST** | `{{url}}/api/v1/auth/login` | `{"email": "test@example.com", "password": "password"}` | `Content-Type: application/json` | Iniciar sesión y obtener token. |
-| **POST** | `{{url}}/api/v1/auth/me` | N/A | `Authorization: Bearer {{token}}` | Obtener usuario autenticado. |
-| **POST** | `{{url}}/api/v1/auth/refresh` | N/A | `Authorization: Bearer {{token}}` | Refrescar token expirado. |
-| **POST** | `{{url}}/api/v1/auth/logout` | N/A | `Authorization: Bearer {{token}}` | Cerrar sesión (invalidar token). |
-| **GET** | `{{url}}/api/v1/authors` | N/A | `Authorization: Bearer {{token}}` | Listar todos los autores. |
-| **POST** | `{{url}}/api/v1/authors` | `{"name": "Gabriel", "surname": "Marquez"}` | `Authorization: Bearer {{token}}` | Crear un nuevo autor. |
-| **GET** | `{{url}}/api/v1/authors/{id}` | N/A | `Authorization: Bearer {{token}}` | Ver detalle de un autor. |
-| **PUT** | `{{url}}/api/v1/authors/{id}` | `{"name": "Gabo", "surname": "Marquez"}` | `Authorization: Bearer {{token}}` | Actualizar un autor. |
-| **DELETE** | `{{url}}/api/v1/authors/{id}` | N/A | `Authorization: Bearer {{token}}` | Eliminar un autor. |
-| **GET** | `{{url}}/api/v1/books` | N/A | `Authorization: Bearer {{token}}` | Listar todos los libros. |
-| **POST** | `{{url}}/api/v1/books` | `{"title": "Cien Años", "published_date": "1967-05-30", "author_id": 1, "description": "Obra maestra"}` | `Authorization: Bearer {{token}}` | Crear libro (Dispara Job Async). |
-| **GET** | `{{url}}/api/v1/books/{id}` | N/A | `Authorization: Bearer {{token}}` | Ver detalle de un libro. |
-| **PUT** | `{{url}}/api/v1/books/{id}` | `{"title": "El coronel no tiene quien le escriba"}` | `Authorization: Bearer {{token}}` | Actualizar un libro. |
-| **DELETE** | `{{url}}/api/v1/books/{id}` | N/A | `Authorization: Bearer {{token}}` | Eliminar un libro. |
-| **GET** | `{{url}}/api/v1/export` | N/A | `Authorization: Bearer {{token}}` | Descargar Excel (Authors & Books). |
+| Método     | Endpoint                      | Body (JSON)                                                                                             | Header                            | Descripción                        |
+| :--------- | :---------------------------- | :------------------------------------------------------------------------------------------------------ | :-------------------------------- | :--------------------------------- |
+| **POST**   | `{{url}}/api/v1/auth/login`   | `{"email": "test@example.com", "password": "password"}`                                                 | `Content-Type: application/json`  | Iniciar sesión y obtener token.    |
+| **POST**   | `{{url}}/api/v1/auth/me`      | N/A                                                                                                     | `Authorization: Bearer {{token}}` | Obtener usuario autenticado.       |
+| **POST**   | `{{url}}/api/v1/auth/refresh` | N/A                                                                                                     | `Authorization: Bearer {{token}}` | Refrescar token expirado.          |
+| **POST**   | `{{url}}/api/v1/auth/logout`  | N/A                                                                                                     | `Authorization: Bearer {{token}}` | Cerrar sesión (invalidar token).   |
+| **GET**    | `{{url}}/api/v1/authors`      | N/A                                                                                                     | `Authorization: Bearer {{token}}` | Listar todos los autores.          |
+| **POST**   | `{{url}}/api/v1/authors`      | `{"name": "Gabriel", "surname": "Marquez"}`                                                             | `Authorization: Bearer {{token}}` | Crear un nuevo autor.              |
+| **GET**    | `{{url}}/api/v1/authors/{id}` | N/A                                                                                                     | `Authorization: Bearer {{token}}` | Ver detalle de un autor.           |
+| **PUT**    | `{{url}}/api/v1/authors/{id}` | `{"name": "Gabo", "surname": "Marquez"}`                                                                | `Authorization: Bearer {{token}}` | Actualizar un autor.               |
+| **DELETE** | `{{url}}/api/v1/authors/{id}` | N/A                                                                                                     | `Authorization: Bearer {{token}}` | Eliminar un autor.                 |
+| **GET**    | `{{url}}/api/v1/books`        | N/A                                                                                                     | `Authorization: Bearer {{token}}` | Listar todos los libros.           |
+| **POST**   | `{{url}}/api/v1/books`        | `{"title": "Cien Años", "published_date": "1967-05-30", "author_id": 1, "description": "Obra maestra"}` | `Authorization: Bearer {{token}}` | Crear libro (Dispara Job Async).   |
+| **GET**    | `{{url}}/api/v1/books/{id}`   | N/A                                                                                                     | `Authorization: Bearer {{token}}` | Ver detalle de un libro.           |
+| **PUT**    | `{{url}}/api/v1/books/{id}`   | `{"title": "El coronel no tiene quien le escriba"}`                                                     | `Authorization: Bearer {{token}}` | Actualizar un libro.               |
+| **DELETE** | `{{url}}/api/v1/books/{id}`   | N/A                                                                                                     | `Authorization: Bearer {{token}}` | Eliminar un libro.                 |
+| **GET**    | `{{url}}/api/v1/export`       | N/A                                                                                                     | `Authorization: Bearer {{token}}` | Descargar Excel (Authors & Books). |
 
-*Nota: Reemplaza `{{url}}` con tu host (ej: `http://localhost:8000`) y `{{token}}` con el token JWT obtenido en el login.*
+_Nota: Reemplaza `{{url}}` con tu host (ej: `http://localhost:8000`) y `{{token}}` con el token JWT obtenido en el login._
+
+## Códigos de Respuesta HTTP
+
+La API utiliza códigos de respuesta HTTP semánticos según el resultado de cada operación:
+
+| Código  | Descripción          | Cuándo ocurre                                |
+| :------ | :------------------- | :------------------------------------------- |
+| **200** | OK                   | Petición exitosa (GET, PUT).                 |
+| **201** | Created              | Recurso creado exitosamente (POST).          |
+| **204** | No Content           | Recurso eliminado exitosamente (DELETE).     |
+| **401** | Unauthorized         | Token no proporcionado, inválido o expirado. |
+| **422** | Unprocessable Entity | Error de validación en los datos enviados.   |
+
+### Ejemplo de respuesta 401 (Unauthorized)
+
+Cuando se intenta acceder a un endpoint protegido sin token o con token inválido:
+
+```json
+{
+  "message": "Unauthorized. Token not provided or invalid."
+}
+```
+
+### Ejemplo de respuesta 422 (Validation Error)
+
+Cuando los datos enviados no cumplen las reglas de validación:
+
+```json
+{
+  "message": "The given data was invalid.",
+  "errors": {
+    "name": ["The name field is required."],
+    "surname": ["The surname field is required."]
+  }
+}
+```

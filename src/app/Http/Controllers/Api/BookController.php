@@ -5,18 +5,12 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
-
 use App\Models\Book;
 use App\Http\Requests\BookRequest;
 use App\Http\Resources\BookResource;
 
 class BookController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth:api');
-    }
-
     public function index()
     {
         return BookResource::collection(Book::all());

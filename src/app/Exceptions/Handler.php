@@ -46,6 +46,19 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        // Handle JWT exceptions
+        if ($exception instanceof \Tymon\JWTAuth\Exceptions\JWTException) {
+            return response()->json(['message' => 'Token not provided or invalid'], 401);
+        }
+
+        if ($exception instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException) {
+            return response()->json(['message' => 'Token has expired'], 401);
+        }
+
+        if ($exception instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException) {
+            return response()->json(['message' => 'Token is invalid'], 401);
+        }
+
         if ($exception instanceof \Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException) {
             return response()->json(['message' => $exception->getMessage()], 401);
         }

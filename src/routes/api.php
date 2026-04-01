@@ -24,7 +24,7 @@ Route::group(['prefix' => 'v1'], function () {
         Route::post('me', 'Api\AuthController@me');
     });
 
-    Route::group(['middleware' => 'auth:api'], function () {
+    Route::group(['middleware' => 'auth.api'], function () {
         Route::apiResource('authors', 'Api\AuthorController');
         Route::apiResource('books', 'Api\BookController');
         Route::get('export', 'Api\ExportController@export'); // Placeholder for export
