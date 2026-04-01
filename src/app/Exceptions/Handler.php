@@ -4,6 +4,8 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class Handler extends ExceptionHandler
 {
@@ -46,6 +48,21 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        // Handle model not found - return 404 JSON
+        if ($exception instanceof ModelNotFoundException) {
+            return response()->json([
+                'message' => 'Resource not found'
+            ], 404);
+        }
+
+        // Handle validation exceptions - always return JSON for API requests
+        if ($exception instanceof ValidationException) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $exception->errors()
+            ], 422);
+        }
+
         // Handle JWT exceptions
         if ($exception instanceof \Tymon\JWTAuth\Exceptions\JWTException) {
             return response()->json(['message' => 'Token not provided or invalid'], 401);
