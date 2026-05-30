@@ -2,6 +2,9 @@
 
 Proyecto desarrollado con **Laravel 5** y **PHP v7.1** con configuración ya preestablecida, funcionando únicamente como API utilizando **JWT** para autenticación y la librería **maatwebsite/excel** para exportar datos.
 
+video explicativo
+https://youtu.be/ve2YGJww11A
+
 Este proyecto se creó con la intención de demostrar mis habilidades como prueba técnica, utilizando herramientas modernas en el 2026 para ejecutar y mantener un proyecto legacy.
 
 ## Requisitos del entorno
